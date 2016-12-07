@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/bash -e
 
 if [ ! $# -gt 2 ]
   then
@@ -6,12 +6,13 @@ if [ ! $# -gt 2 ]
     exit 1
 fi
 
-adduser -D -u $3 nfsuser
+adduser -u $3 --gecos 'NFSUser' --disabled-password nfsuser
+adduser nfsuser sudo
 mount -v -t nfs -o nfsvers=4,nolock $1:$2 /mnt/nfs
 
 if [ $# -gt 3 ]
   then
-    su - nfsuser -c "cd `pwd`; $4"
+    sudo -u nfsuser bash -c "cd `pwd`; $4"
   else
-    su - nfsuser -c "cd `pwd`; /bin/sh"
+    sudo -i -u nfsuser
 fi
